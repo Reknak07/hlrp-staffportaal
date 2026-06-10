@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haarlem Roleplay Staff Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <img src="logo.png" alt="Haarlem Roleplay" onerror="this.style.display='none'">
+                <div class="loading-text">Haarlem Roleplay</div>
+            </div>
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Command Palette -->
+    <div class="command-palette" id="commandPalette">
+        <div class="command-backdrop" id="commandBackdrop"></div>
+        <div class="command-content">
+            <div class="command-input-wrapper">
+                <i class="fas fa-search command-icon"></i>
+                <input type="text" class="command-input" id="commandInput" placeholder="Typ een commando of zoek...">
+                <kbd class="command-shortcut">ESC</kbd>
+            </div>
+            <div class="command-results" id="commandResults">
+                <div class="command-group">
+                    <div class="command-group-title">Navigatie</div>
+                    <div class="command-item" data-action="navigate" data-target="dashboard">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="command-item" data-action="navigate" data-target="staffregels">
+                        <i class="fas fa-scroll"></i>
+                        <span>Staffregels</span>
+                    </div>
+                    <div class="command-item" data-action="navigate" data-target="staffrangen">
+                        <i class="fas fa-users"></i>
+                        <span>Staffrangen</span>
+                    </div>
+                    <div class="command-item" data-action="navigate" data-target="strafbeleid">
+                        <i class="fas fa-gavel"></i>
+                        <span>Strafbeleid</span>
+                    </div>
+                    <div class="command-item" data-action="navigate" data-target="strafberekenaar">
+                        <i class="fas fa-calculator"></i>
+                        <span>Strafberekenaar</span>
+                    </div>
+                    <div class="command-item" data-action="navigate" data-target="tickets">
+                        <i class="fas fa-ticket"></i>
+                        <span>Tickets</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Rank Modal -->
+    <div class="modal" id="rankModal">
+        <div class="modal-backdrop" onclick="closeRankModal()"></div>
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalRankTitle">Rank Naam</h2>
+                <button class="modal-close" onclick="closeRankModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h3>Verwachtingen</h3>
+                    <p id="modalExpectations">-</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Taken & Verantwoordelijkheden</h3>
+                    <p id="modalDuties">-</p>
+                </div>
+                <div class="modal-section">
+                    <h3>Bevoegdheden</h3>
+                    <p id="modalPermissions">-</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="logo.png" alt="Haarlem Roleplay" onerror="this.style.display='none'">
+                    <span class="logo-text">Haarlem Roleplay</span>
+                </div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#staffregels" class="nav-item" data-page="staffregels">
+                    <i class="fas fa-scroll"></i>
+                    <span>Staffregels</span>
+                </a>
+                <a href="#staffrangen" class="nav-item" data-page="staffrangen">
+                    <i class="fas fa-users"></i>
+                    <span>Staffrangen</span>
+                </a>
+                <a href="#strafbeleid" class="nav-item" data-page="strafbeleid">
+                    <i class="fas fa-gavel"></i>
+                    <span>Strafbeleid</span>
+                </a>
+                <a href="#strafberekenaar" class="nav-item" data-page="strafberekenaar">
+                    <i class="fas fa-calculator"></i>
+                    <span>Strafberekenaar</span>
+                </a>
+                <a href="#tickets" class="nav-item" data-page="tickets">
+                    <i class="fas fa-ticket"></i>
+                    <span>Tickets</span>
+                </a>
+                <a href="#sollicitaties" class="nav-item" data-page="sollicitaties">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Sollicitaties</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Zoeken... (Ctrl+K)" id="globalSearch">
+                </div>
+                <div class="sidebar-credits">
+                    <div class="author-info">
+                        <span class="author-label">Gemaakt door:</span>
+                        <span class="author-name">Reknak07</span>
+                    </div>
+                    <a href="https://discord.gg/yYTMSPA3Kt" target="_blank" class="discord-btn">
+                        <i class="fab fa-discord"></i>
+                        <span>Join Discord</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <header class="mobile-header">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="mobile-logo">
+                    <img src="logo.png" alt="Haarlem Roleplay" onerror="this.style.display='none'">
+                    <span>Staff Portal</span>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content" id="pageContent">
+                <!-- Dashboard Page -->
+                <div class="page active" id="page-dashboard">
+                    <div class="hero-section">
+                        <div class="hero-background">
+                            <div class="orb orb-1"></div>
+                            <div class="orb orb-2"></div>
+                            <div class="orb orb-3"></div>
+                        </div>
+                        <div class="hero-content">
+                            <h1 class="hero-title">Haarlem Roleplay Staff Portal</h1>
+                            <p class="hero-subtitle">Interne documentatie, procedures en hulpmiddelen voor staffleden.</p>
+                            <div class="hero-actions">
+                                <button class="btn btn-primary btn-glow">
+                                    <i class="fas fa-rocket"></i>
+                                    Quick Start
+                                </button>
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-book"></i>
+                                    Documentatie
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon stat-icon-primary">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">Beste Stad</div>
+                                <div class="stat-label">van Nederland</div>
+                            </div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-crown"></i>
+                                <span>#1</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon stat-icon-success">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">Grote</div>
+                                <div class="stat-label">Community</div>
+                            </div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-heart"></i>
+                                <span>Actief</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon stat-icon-warning">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">Premium</div>
+                                <div class="stat-label">Roleplay</div>
+                            </div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-fire"></i>
+                                <span>Top</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon stat-icon-danger">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">Professioneel</div>
+                                <div class="stat-label">Staff Team</div>
+                            </div>
+                            <div class="stat-trend positive">
+                                <i class="fas fa-check"></i>
+                                <span>24/7</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-bolt"></i>
+                                Snelle Acties
+                            </h2>
+                            <div class="quick-actions">
+                                <button class="quick-action glass-card" onclick="navigateTo('strafberekenaar')">
+                                    <i class="fas fa-calculator"></i>
+                                    <span>Strafberekenaar</span>
+                                </button>
+                                <button class="quick-action glass-card" onclick="navigateTo('tickets')">
+                                    <i class="fas fa-ticket"></i>
+                                    <span>Tickets Bekijken</span>
+                                </button>
+                                <button class="quick-action glass-card" onclick="navigateTo('staffregels')">
+                                    <i class="fas fa-book"></i>
+                                    <span>Staffregels</span>
+                                </button>
+                                <button class="quick-action glass-card" onclick="navigateTo('staffrangen')">
+                                    <i class="fas fa-users"></i>
+                                    <span>Staffrangen</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-section">
+                            <h2 class="section-title">
+                                <i class="fas fa-bell"></i>
+                                Belangrijke Meldingen
+                            </h2>
+                            <div class="notifications-list">
+                                <div class="notification-item glass-card notification-high">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Nieuwe APV Update</div>
+                                        <div class="notification-text">De strafcategorieën zijn bijgewerkt. Lees de nieuwe regels.</div>
+                                        <div class="notification-time">2 uur geleden</div>
+                                    </div>
+                                </div>
+                                <div class="notification-item glass-card notification-medium">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Staff Meeting</div>
+                                        <div class="notification-text">Volgende staff meeting: Zondag 21:00 in Discord.</div>
+                                        <div class="notification-time">1 dag geleden</div>
+                                    </div>
+                                </div>
+                                <div class="notification-item glass-card notification-low">
+                                    <div class="notification-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title">Nieuwe Staffleden</div>
+                                        <div class="notification-text">Welkom bij 3 nieuwe staffleden dit weekend!</div>
+                                        <div class="notification-time">3 dagen geleden</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-history"></i>
+                            Laatste Updates
+                        </h2>
+                        <div class="updates-timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content glass-card">
+                                    <div class="timeline-date">Vandaag</div>
+                                    <div class="timeline-title">Nieuwe Strafberekenaar</div>
+                                    <div class="timeline-description">De strafberekenaar is volledig vernieuwd met meer overtredingen.</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content glass-card">
+                                    <div class="timeline-date">Gisteren</div>
+                                    <div class="timeline-title">Staffregels Update</div>
+                                    <div class="timeline-description">Nieuwe sectie toegevoegd over corruptiebeleid.</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content glass-card">
+                                    <div class="timeline-date">3 dagen geleden</div>
+                                    <div class="timeline-title">Ticket Systeem</div>
+                                    <div class="timeline-description">Nieuwe categorie toegevoegd: Development Vragen.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staffregels Page -->
+                <div class="page" id="page-staffregels">
+                    <div class="page-header">
+                        <h1 class="page-title">Staffregels</h1>
+                        <p class="page-subtitle">Alle regels en richtlijnen voor staffleden</p>
+                    </div>
+
+                    <div class="rules-layout">
+                        <div class="rules-sidebar">
+                            <div class="rules-search">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Zoek in regels..." id="rulesSearch">
+                            </div>
+                            <div class="rules-toc">
+                                <a href="#algemene-gedragsregels" class="toc-item active">Algemene Gedragsregels</a>
+                                <a href="#misbruik-staffrechten" class="toc-item">Misbruik van Staffrechten</a>
+                                <a href="#communicatie-samenwerking" class="toc-item">Communicatie & Samenwerking</a>
+                                <a href="#actief-bereikbaar" class="toc-item">Actief & Bereikbaar</a>
+                                <a href="#meldingen-banbeleid" class="toc-item">Meldingen & Banbeleid</a>
+                                <a href="#verantwoordelijkheid-community" class="toc-item">Verantwoordelijkheid naar de Community</a>
+                                <a href="#on-duty-off-duty" class="toc-item">On-Duty & Off-Duty</a>
+                                <a href="#gebruik-staffinformatie" class="toc-item">Gebruik van Staffinformatie</a>
+                                <a href="#tickets-reports" class="toc-item">Tickets & Reports</a>
+                                <a href="#corruptiebeleid" class="toc-item">Corruptiebeleid</a>
+                                <a href="#discord-extern-gedrag" class="toc-item">Discord & Extern Gedrag</a>
+                                <a href="#onderwereld-staff" class="toc-item">Onderwereld & Staff</a>
+                                <a href="#verwachtingen-stafflid" class="toc-item">Verwachtingen van een Stafflid</a>
+                                <a href="#staff-strike-systeem" class="toc-item">Staff Strike Systeem</a>
+                            </div>
+                        </div>
+
+                        <div class="rules-content">
+                            <div class="rule-section" id="algemene-gedragsregels">
+                                <h2 class="rule-title">Algemene Gedragsregels</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Als stafflid ben je het gezicht van Haarlem Roleplay. Het is belangrijk dat je je altijd professioneel gedraagt, zowel in-game als op Discord. Behandel alle spelers met respect en geduld, ongeacht hun gedrag.</p>
+                                    <ul>
+                                        <li>Wees altijd beleefd en professioneel in je communicatie</li>
+                                        <li>Gebruik geen grof taalgebruik of beledigingen</li>
+                                        <li>Handel tickets en reports onpartijdig af</li>
+                                        <li>Gebruik je staffrechten alleen voor stafftaken</li>
+                                        <li>Bescherm de privacy van spelers en staffleden</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="misbruik-staffrechten">
+                                <h2 class="rule-title">Misbruik van Staffrechten</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Misbruik van staffrechten wordt streng bestraft. Staffrechten zijn alleen bedoeld voor het uitvoeren van je stafftaken en niet voor persoonlijk gewin.</p>
+                                    <ul>
+                                        <li>Gebruik geen commands voor je eigen karakter</li>
+                                        <li>Geen items of geld spawnen voor jezelf of vrienden</li>
+                                        <li>Geen teleporteren naar spelers zonder reden</li>
+                                        <li>Geen informatie gebruiken die je als staff hebt verkregen voor je karakter</li>
+                                        <li>Geen staffrechten gebruiken om andere spelers te bevoordelen</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="communicatie-samenwerking">
+                                <h2 class="rule-title">Communicatie & Samenwerking</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Goede communicatie is essentieel voor een goed functionerend team. Werk samen met andere staffleden en houd elkaar op de hoogte.</p>
+                                    <ul>
+                                        <li>Communiceer duidelijk en professioneel in staffkanalen</li>
+                                        <li>Werk samen bij complexe cases</li>
+                                        <li>Vraag hulp als je niet zeker weet wat je moet doen</li>
+                                        <li>Deel informatie over belangrijke gebeurtenissen</li>
+                                        <li>Respecteer de hiërarchie en volg instructies op van hogere staff</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="actief-bereikbaar">
+                                <h2 class="rule-title">Actief & Bereikbaar</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Als stafflid wordt verwacht dat je actief bent en bereikbaar voor de community. Zorg dat je voldoet aan de minimum activiteitseisen.</p>
+                                    <ul>
+                                        <li>Minimaal 10 uur per week on-duty zijn</li>
+                                        <li>Reageer tijdig op tickets en reports</li>
+                                        <li>Meld je af als je langere tijd niet beschikbaar bent</li>
+                                        <li>Wees actief op Discord en in staffkanalen</li>
+                                        <li>Neem deel aan staff meetings en trainingen</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="meldingen-banbeleid">
+                                <h2 class="rule-title">Meldingen & Banbeleid</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Correcte meldingen zijn cruciaal voor het bijhouden van spelerhistorie. Volg altijd het juiste proces bij het banne van spelers.</p>
+                                    <ul>
+                                        <li>Maak altijd een melding in het ban systeem</li>
+                                        <li>Voeg bewijs toe (screenshots, logs)</li>
+                                        <li>Geef een duidelijke reden en duur</li>
+                                        <li>Communiceer de ban met de speler</li>
+                                        <li>Documenteer alle relevante details</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="verantwoordelijkheid-community">
+                                <h2 class="rule-title">Verantwoordelijkheid naar de Community</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Als stafflid heb je een verantwoordelijkheid naar de hele community. Zorg voor een positieve speelervaring voor iedereen.</p>
+                                    <ul>
+                                        <li>Wees een rolmodel voor andere spelers</li>
+                                        <li>Help nieuwe spelers waar mogelijk</li>
+                                        <li>Behandel iedereen gelijkwaardig</li>
+                                        <li>Luister naar feedback van de community</li>
+                                        <li>Report misbruik door andere staffleden</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="on-duty-off-duty">
+                                <h2 class="rule-title">On-Duty & Off-Duty</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Er is een duidelijk onderscheid tussen je rol als stafflid en als speler. Houd deze rollen gescheiden.</p>
+                                    <ul>
+                                        <li>Gebruik staffcommands alleen als je on-duty bent</li>
+                                        <li>Geen staffacties ondernemen tijdens off-duty gameplay</li>
+                                        <li>Maak duidelijk wanneer je on-duty bent</li>
+                                        <li>Gebruik je staffkarakter niet voor RP</li>
+                                        <li>Log uit als staff voordat je gaat RP'en</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="gebruik-staffinformatie">
+                                <h2 class="rule-title">Gebruik van Staffinformatie</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Als stafflid heb je toegang tot gevoelige informatie. Deze informatie mag nooit worden misbruikt.</p>
+                                    <ul>
+                                        <li>Deel geen staffinformatie met niet-staff</li>
+                                        <li>Gebruik geen inside informatie voor je karakter</li>
+                                        <li>Bescherm persoonlijke gegevens van spelers</li>
+                                        <li>Geen informatie lekken naar buiten</li>
+                                        <li>Respecteer de privacy van alle gebruikers</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="tickets-reports">
+                                <h2 class="rule-title">Tickets & Reports</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Tickets en reports zijn de belangrijkste manier waarop spelers contact opnemen met staff. Behandel deze serieus.</p>
+                                    <ul>
+                                        <li>Reageer tijdig op alle tickets</li>
+                                        <li>Wees geduldig en behulpzaam</li>
+                                        <li>Vraag om duidelijke informatie en bewijs</li>
+                                        <li>Handel reports onpartijdig af</li>
+                                        <li>Documenteer de afhandeling van elk ticket</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="corruptiebeleid">
+                                <h2 class="rule-title">Corruptiebeleid</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Corruptie wordt niet getolereerd. Elk vermoeden van corruptie wordt serieus onderzocht.</p>
+                                    <ul>
+                                        <li>Geen gunsten verlenen aan vrienden</li>
+                                        <li>Geen accepteren van giften of beloningen</li>
+                                        <li>Geen informatie verkopen of delen</li>
+                                        <li>Report corruptie onmiddellijk aan leidinggevenden</li>
+                                        <li>Corruptie leidt tot onmiddellijke verwijdering uit staff</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="discord-extern-gedrag">
+                                <h2 class="rule-title">Discord & Extern Gedrag</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Jouw gedrag buiten de server reflecteert op Haarlem Roleplay. Wees professioneel in alle externe communicatie.</p>
+                                    <ul>
+                                        <li>Wees professioneel in Discord servers</li>
+                                        <li>Geen negatieve comments over de server</li>
+                                        <li>Representeer Haarlem Roleplay positief</li>
+                                        <li>Geen drama verspreiden</li>
+                                        <li>Volg de Discord regels in alle servers</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="onderwereld-staff">
+                                <h2 class="rule-title">Onderwereld & Staff</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Als stafflid met een onderwereld karakter zijn er extra regels om belangenverstrengeling te voorkomen.</p>
+                                    <ul>
+                                        <li>Geen staffacties in onderwereld zaken</li>
+                                        <li>Geen informatie delen over onderwereld activiteiten</li>
+                                        <li>Geen gebruik van staffrechten voor gang activiteiten</li>
+                                        <li>Report onderwereld gerelateerde issues aan coördinatoren</li>
+                                        <li>Houd je staff en onderwereld rol strikt gescheiden</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="verwachtingen-stafflid">
+                                <h2 class="rule-title">Verwachtingen van een Stafflid</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Er worden hoge verwachtingen gesteld aan staffleden. Wees je bewust van deze verantwoordelijkheden.</p>
+                                    <ul>
+                                        <li>Wees professioneel in alle situaties</li>
+                                        <li>Beschikbaar en actief zijn</li>
+                                        <li>Continu leren en verbeteren</li>
+                                        <li>Teamplayer zijn</li>
+                                        <li>De waarden van Haarlem Rolepay vertegenwoordigen</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="rule-section" id="staff-strike-systeem">
+                                <h2 class="rule-title">Staff Strike Systeem</h2>
+                                <div class="rule-content glass-card">
+                                    <p>Het strike systeem wordt gebruikt om serious misdraging te documenteren en te straffen.</p>
+                                    <ul>
+                                        <li>Strike 1: Waarschuwing en training</li>
+                                        <li>Strike 2: Schorsing van 1 week</li>
+                                        <li>Strike 3: Demotie of verwijdering uit staff</li>
+                                        <li>Strikes vervallen na 6 maanden goed gedrag</li>
+                                        <li>Appeals kunnen worden ingediend bij management</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staffrangen Page -->
+                <div class="page" id="page-staffrangen">
+                    <div class="page-header">
+                        <h1 class="page-title">Staffrangen</h1>
+                        <p class="page-subtitle">Hiërarchie en rangen binnen het staff team</p>
+                    </div>
+
+                    <div class="ranks-container">
+                        <div class="rank-category">
+                            <div class="rank-category-header glass-card" onclick="toggleRankCategory(this)">
+                                <div class="rank-category-title">
+                                    <i class="fas fa-crown"></i>
+                                    <span>BESTUUR</span>
+                                </div>
+                                <i class="fas fa-chevron-down rank-chevron"></i>
+                            </div>
+                            <div class="rank-category-content">
+                                <div class="rank-item glass-card" onclick="openRankModal('eigenaar')" style="cursor: pointer;">
+                                    <div class="rank-name">Eigenaar</div>
+                                    <div class="rank-badge rank-badge-owner">Owner</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('mede-beheer')" style="cursor: pointer;">
+                                    <div class="rank-name">Mede-Beheer</div>
+                                    <div class="rank-badge rank-badge-admin">Co-Owner</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('hoge-raad')" style="cursor: pointer;">
+                                    <div class="rank-name">Hoge Raad</div>
+                                    <div class="rank-badge rank-badge-admin">High Council</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('director')" style="cursor: pointer;">
+                                    <div class="rank-name">Director</div>
+                                    <div class="rank-badge rank-badge-admin">Director</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('supervisor')" style="cursor: pointer;">
+                                    <div class="rank-name">Supervisor</div>
+                                    <div class="rank-badge rank-badge-admin">Supervisor</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('advisor')" style="cursor: pointer;">
+                                    <div class="rank-name">Advisor</div>
+                                    <div class="rank-badge rank-badge-admin">Advisor</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rank-category">
+                            <div class="rank-category-header glass-card" onclick="toggleRankCategory(this)">
+                                <div class="rank-category-title">
+                                    <i class="fas fa-code"></i>
+                                    <span>DEVELOPMENT</span>
+                                </div>
+                                <i class="fas fa-chevron-down rank-chevron"></i>
+                            </div>
+                            <div class="rank-category-content">
+                                <div class="rank-item glass-card" onclick="openRankModal('head-of-development')" style="cursor: pointer;">
+                                    <div class="rank-name">Head of Development</div>
+                                    <div class="rank-badge rank-badge-dev">Head Dev</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('senior-developer')" style="cursor: pointer;">
+                                    <div class="rank-name">Senior Developer</div>
+                                    <div class="rank-badge rank-badge-dev">Senior Dev</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('developer')" style="cursor: pointer;">
+                                    <div class="rank-name">Developer</div>
+                                    <div class="rank-badge rank-badge-dev">Developer</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('junior-developer')" style="cursor: pointer;">
+                                    <div class="rank-name">Junior Developer</div>
+                                    <div class="rank-badge rank-badge-dev">Junior Dev</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rank-category">
+                            <div class="rank-category-header glass-card" onclick="toggleRankCategory(this)">
+                                <div class="rank-category-title">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>MANAGEMENT</span>
+                                </div>
+                                <i class="fas fa-chevron-down rank-chevron"></i>
+                            </div>
+                            <div class="rank-category-content">
+                                <div class="rank-item glass-card" onclick="openRankModal('head-management')" style="cursor: pointer;">
+                                    <div class="rank-name">Head Management</div>
+                                    <div class="rank-badge rank-badge-management">Head Mgmt</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('senior-management')" style="cursor: pointer;">
+                                    <div class="rank-name">Senior Management</div>
+                                    <div class="rank-badge rank-badge-management">Senior Mgmt</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('management')" style="cursor: pointer;">
+                                    <div class="rank-name">Management</div>
+                                    <div class="rank-badge rank-badge-management">Management</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('junior-management')" style="cursor: pointer;">
+                                    <div class="rank-name">Junior Management</div>
+                                    <div class="rank-badge rank-badge-management">Junior Mgmt</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rank-category">
+                            <div class="rank-category-header glass-card" onclick="toggleRankCategory(this)">
+                                <div class="rank-category-title">
+                                    <i class="fas fa-user-tie"></i>
+                                    <span>HEAD OF STAFF</span>
+                                </div>
+                                <i class="fas fa-chevron-down rank-chevron"></i>
+                            </div>
+                            <div class="rank-category-content">
+                                <div class="rank-item glass-card" onclick="openRankModal('senior-head-of-staff')" style="cursor: pointer;">
+                                    <div class="rank-name">Senior Head of Staff</div>
+                                    <div class="rank-badge rank-badge-hos">Senior HoS</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('head-of-staff')" style="cursor: pointer;">
+                                    <div class="rank-name">Head of Staff</div>
+                                    <div class="rank-badge rank-badge-hos">HoS</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('junior-head-of-staff')" style="cursor: pointer;">
+                                    <div class="rank-name">Junior Head of Staff</div>
+                                    <div class="rank-badge rank-badge-hos">Junior HoS</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rank-category">
+                            <div class="rank-category-header glass-card" onclick="toggleRankCategory(this)">
+                                <div class="rank-category-title">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>ADMIN TEAM</span>
+                                </div>
+                                <i class="fas fa-chevron-down rank-chevron"></i>
+                            </div>
+                            <div class="rank-category-content">
+                                <div class="rank-item glass-card" onclick="openRankModal('head-admin')" style="cursor: pointer;">
+                                    <div class="rank-name">Head Admin</div>
+                                    <div class="rank-badge rank-badge-admin">Head Admin</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('super-admin')" style="cursor: pointer;">
+                                    <div class="rank-name">Super Admin</div>
+                                    <div class="rank-badge rank-badge-admin">Super Admin</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('senior-admin')" style="cursor: pointer;">
+                                    <div class="rank-name">Senior Admin</div>
+                                    <div class="rank-badge rank-badge-admin">Senior Admin</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('admin')" style="cursor: pointer;">
+                                    <div class="rank-name">Admin</div>
+                                    <div class="rank-badge rank-badge-admin">Admin</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('junior-admin')" style="cursor: pointer;">
+                                    <div class="rank-name">Junior Admin</div>
+                                    <div class="rank-badge rank-badge-admin">Junior Admin</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rank-category">
+                            <div class="rank-category-header glass-card" onclick="toggleRankCategory(this)">
+                                <div class="rank-category-title">
+                                    <i class="fas fa-gavel"></i>
+                                    <span>MODERATOR TEAM</span>
+                                </div>
+                                <i class="fas fa-chevron-down rank-chevron"></i>
+                            </div>
+                            <div class="rank-category-content">
+                                <div class="rank-item glass-card" onclick="openRankModal('head-moderator')" style="cursor: pointer;">
+                                    <div class="rank-name">Head Moderator</div>
+                                    <div class="rank-badge rank-badge-mod">Head Mod</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('super-moderator')" style="cursor: pointer;">
+                                    <div class="rank-name">Super Moderator</div>
+                                    <div class="rank-badge rank-badge-mod">Super Mod</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('senior-moderator')" style="cursor: pointer;">
+                                    <div class="rank-name">Senior Moderator</div>
+                                    <div class="rank-badge rank-badge-mod">Senior Mod</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('moderator')" style="cursor: pointer;">
+                                    <div class="rank-name">Moderator</div>
+                                    <div class="rank-badge rank-badge-mod">Moderator</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('junior-moderator')" style="cursor: pointer;">
+                                    <div class="rank-name">Junior Moderator</div>
+                                    <div class="rank-badge rank-badge-mod">Junior Mod</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rank-category">
+                            <div class="rank-category-header glass-card" onclick="toggleRankCategory(this)">
+                                <div class="rank-category-title">
+                                    <i class="fas fa-user"></i>
+                                    <span>STAFF TEAM</span>
+                                </div>
+                                <i class="fas fa-chevron-down rank-chevron"></i>
+                            </div>
+                            <div class="rank-category-content">
+                                <div class="rank-item glass-card" onclick="openRankModal('staff')" style="cursor: pointer;">
+                                    <div class="rank-name">Staff</div>
+                                    <div class="rank-badge rank-badge-staff">Staff</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rank-category">
+                            <div class="rank-category-header glass-card" onclick="toggleRankCategory(this)">
+                                <div class="rank-category-title">
+                                    <i class="fas fa-tasks"></i>
+                                    <span>COÖRDINATOREN</span>
+                                </div>
+                                <i class="fas fa-chevron-down rank-chevron"></i>
+                            </div>
+                            <div class="rank-category-content">
+                                <div class="rank-item glass-card" onclick="openRankModal('hoofd-staff-coordinator')" style="cursor: pointer;">
+                                    <div class="rank-name">Hoofd Staff Coördinator</div>
+                                    <div class="rank-badge rank-badge-coord">Head Staff Coord</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('hoofd-onderwereld-coordinator')" style="cursor: pointer;">
+                                    <div class="rank-name">Hoofd Onderwereld Coördinator</div>
+                                    <div class="rank-badge rank-badge-coord">Head UW Coord</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('hoofd-hulpdiensten-coordinator')" style="cursor: pointer;">
+                                    <div class="rank-name">Hoofd Hulpdiensten Coördinator</div>
+                                    <div class="rank-badge rank-badge-coord">Head ES Coord</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('refund-coordinator')" style="cursor: pointer;">
+                                    <div class="rank-name">Refund Coördinator</div>
+                                    <div class="rank-badge rank-badge-coord">Refund Coord</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('unban-coordinator')" style="cursor: pointer;">
+                                    <div class="rank-name">Unban Coördinator</div>
+                                    <div class="rank-badge rank-badge-coord">Unban Coord</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('staff-coordinator')" style="cursor: pointer;">
+                                    <div class="rank-name">Staff Coördinator</div>
+                                    <div class="rank-badge rank-badge-coord">Staff Coord</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('onderwereld-coordinator')" style="cursor: pointer;">
+                                    <div class="rank-name">Onderwereld Coördinator</div>
+                                    <div class="rank-badge rank-badge-coord">UW Coord</div>
+                                </div>
+                                <div class="rank-item glass-card" onclick="openRankModal('hulpdiensten-coordinator')" style="cursor: pointer;">
+                                    <div class="rank-name">Hulpdiensten Coördinator</div>
+                                    <div class="rank-badge rank-badge-coord">ES Coord</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strafbeleid Page -->
+                <div class="page" id="page-strafbeleid">
+                    <div class="page-header">
+                        <h1 class="page-title">Strafbeleid</h1>
+                        <p class="page-subtitle">Alle strafcategorieën en sancties</p>
+                    </div>
+
+                    <div class="punishment-controls">
+                        <div class="search-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Zoek in categorieën..." id="punishmentSearch">
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">Alle</button>
+                            <button class="filter-btn" data-filter="warning">Waarschuwingen</button>
+                            <button class="filter-btn" data-filter="ban">Bans</button>
+                            <button class="filter-btn" data-filter="permanent">Permanent</button>
+                        </div>
+                    </div>
+
+                    <div class="punishment-table-container glass-card">
+                        <table class="punishment-table">
+                            <thead>
+                                <tr>
+                                    <th>Categorie</th>
+                                    <th>Sanctie</th>
+                                    <th>Taken</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="punishment-row cat-1" data-category="warning">
+                                    <td><span class="cat-badge cat-1">Cat. 1</span></td>
+                                    <td>Mondelinge of schriftelijke waarschuwing</td>
+                                    <td>+ 50 taken</td>
+                                    <td><span class="type-badge warning">Waarschuwing</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-2" data-category="warning">
+                                    <td><span class="cat-badge cat-2">Cat. 2</span></td>
+                                    <td>Waarschuwing</td>
+                                    <td>+ 100 taken</td>
+                                    <td><span class="type-badge warning">Waarschuwing</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-3" data-category="ban">
+                                    <td><span class="cat-badge cat-3">Cat. 3</span></td>
+                                    <td>3 uur ban</td>
+                                    <td>+ 50 taken</td>
+                                    <td><span class="type-badge ban">Ban</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-4" data-category="ban">
+                                    <td><span class="cat-badge cat-4">Cat. 4</span></td>
+                                    <td>6 uur ban</td>
+                                    <td>+ 100 taken</td>
+                                    <td><span class="type-badge ban">Ban</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-5" data-category="ban">
+                                    <td><span class="cat-badge cat-5">Cat. 5</span></td>
+                                    <td>12 uur ban</td>
+                                    <td>+ 150 taken</td>
+                                    <td><span class="type-badge ban">Ban</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-6" data-category="ban">
+                                    <td><span class="cat-badge cat-6">Cat. 6</span></td>
+                                    <td>24 uur ban</td>
+                                    <td>+ 250 taken</td>
+                                    <td><span class="type-badge ban">Ban</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-7" data-category="ban">
+                                    <td><span class="cat-badge cat-7">Cat. 7</span></td>
+                                    <td>3 dagen ban</td>
+                                    <td>+ 300 taken</td>
+                                    <td><span class="type-badge ban">Ban</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-8" data-category="ban">
+                                    <td><span class="cat-badge cat-8">Cat. 8</span></td>
+                                    <td>2 weken ban</td>
+                                    <td>+ 400 taken</td>
+                                    <td><span class="type-badge ban">Ban</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-9" data-category="ban">
+                                    <td><span class="cat-badge cat-9">Cat. 9</span></td>
+                                    <td>1 maand ban</td>
+                                    <td>+ 450 taken</td>
+                                    <td><span class="type-badge ban">Ban</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-10" data-category="permanent">
+                                    <td><span class="cat-badge cat-10">Cat. 10</span></td>
+                                    <td>Permanente ban</td>
+                                    <td>-</td>
+                                    <td><span class="type-badge permanent">Permanent</span></td>
+                                </tr>
+                                <tr class="punishment-row cat-11" data-category="permanent">
+                                    <td><span class="cat-badge cat-11">Cat. 11</span></td>
+                                    <td>Permanente ban + account wipe</td>
+                                    <td>-</td>
+                                    <td><span class="type-badge permanent">Permanent</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Strafberekenaar Page -->
+                <div class="page" id="page-strafberekenaar">
+                    <div class="page-header">
+                        <h1 class="page-title">Strafberekenaar</h1>
+                        <p class="page-subtitle">Bereken sancties voor overtredingen</p>
+                    </div>
+
+                    <div class="calculator-layout">
+                        <div class="calculator-input glass-card">
+                            <h2 class="calculator-title">Gegevens Invoeren</h2>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Speler Naam</label>
+                                <input type="text" class="form-input" id="playerName" placeholder="Voer spelernaam in...">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Steam ID / Discord ID</label>
+                                <input type="text" class="form-input" id="playerId" placeholder="Voer Steam ID of Discord ID in...">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Overtreding</label>
+                                <select id="violationSelect" class="form-input">
+                                    <option value="">Kies een overtreding...</option>
+                                    <option value="failrp">FailRP</option>
+                                    <option value="powergaming">Powergaming</option>
+                                    <option value="metagaming">Metagaming</option>
+                                    <option value="combatlog">Combatloggen</option>
+                                    <option value="nvol">NVOL</option>
+                                    <option value="vdm">VDM</option>
+                                    <option value="rdm">RDM</option>
+                                    <option value="cheats">Cheats</option>
+                                    <option value="exploits">Exploits</option>
+                                    <option value="staff-abuse">Staff Abuse</option>
+                                    <option value="toxic">Toxic Gedrag</option>
+                                    <option value="copbait">Copbaiten</option>
+                                    <option value="f6-abuse">F6 Abuse</option>
+                                    <option value="gang-territory">Gangterrein Overtreding</option>
+                                    <option value="weapon-abuse">Wapenmisbruik</option>
+                                    <option value="mic-abuse">Microfoonmisbruik</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Beschrijving van het incident</label>
+                                <textarea class="form-textarea" id="incidentDescription" rows="4" placeholder="Beschrijf wat er gebeurd is..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Aantal eerdere overtredingen (laatste 30 dagen)</label>
+                                <input type="number" class="form-input" id="previousViolations" min="0" value="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Bewijs beschikbaar?</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="hasScreenshot"> Screenshots
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="hasVideo"> Video opnames
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="hasLogs"> Logs
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Extra notities</label>
+                                <textarea class="form-textarea" id="extraNotes" rows="3" placeholder="Extra informatie voor de staff..."></textarea>
+                            </div>
+
+                            <button class="btn btn-primary btn-glow" onclick="calculatePunishment()">
+                                <i class="fas fa-calculator"></i>
+                                Bereken Sanctie
+                            </button>
+                        </div>
+
+                        <div class="calculator-result glass-card" id="calculatorResult" style="display: none;">
+                            <h2 class="calculator-title">Resultaat</h2>
+                            <div class="result-item">
+                                <span class="result-label">Categorie:</span>
+                                <span class="result-value" id="resultCategory">-</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Sanctie:</span>
+                                <span class="result-value" id="resultSanction">-</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Taken:</span>
+                                <span class="result-value" id="resultTasks">-</span>
+                            </div>
+                            <div class="result-description">
+                                <h3>Uitleg</h3>
+                                <p id="resultExplanation">-</p>
+                            </div>
+                            <div class="result-notes">
+                                <h3>Notities voor Staff</h3>
+                                <p id="resultNotes">-</p>
+                            </div>
+                            <div class="result-summary">
+                                <h3>Samenvatting</h3>
+                                <p id="resultSummary">-</p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="copyResult()">
+                                <i class="fas fa-copy"></i>
+                                Kopieer Resultaat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tickets Page -->
+                <div class="page" id="page-tickets">
+                    <div class="page-header">
+                        <h1 class="page-title">Tickets</h1>
+                        <p class="page-subtitle">Overzicht van alle ticketcategorieën</p>
+                    </div>
+
+                    <div class="tickets-grid">
+                        <div class="ticket-card glass-card">
+                            <div class="ticket-icon ticket-icon-danger">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3 class="ticket-title">Klachten</h3>
+                            <p class="ticket-description">Klachten over staffleden of andere spelers</p>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Onderzoek klacht en verzamel bewijs</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-file"></i>
+                                    <span>Bewijs verplicht</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-card glass-card">
+                            <div class="ticket-icon ticket-icon-warning">
+                                <i class="fas fa-ban"></i>
+                            </div>
+                            <h3 class="ticket-title">Unban Aanvragen</h3>
+                            <p class="ticket-description">Aanvragen voor opheffing van een ban</p>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Beoordeel ban reden en appeal</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-file"></i>
+                                    <span>Bewijs verplicht</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-card glass-card">
+                            <div class="ticket-icon ticket-icon-info">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <h3 class="ticket-title">Overige Vragen</h3>
+                            <p class="ticket-description">Algemene vragen over de server</p>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Beantwoord vragen professioneel</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-file"></i>
+                                    <span>Bewijs optioneel</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-card glass-card">
+                            <div class="ticket-icon ticket-icon-success">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <h3 class="ticket-title">Overheid Sollicitatie</h3>
+                            <p class="ticket-description">Sollicitaties voor politie, ambulance, etc.</p>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Beoordeel sollicitatie en plan interview</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-file"></i>
+                                    <span>Formulier verplicht</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-card glass-card">
+                            <div class="ticket-icon ticket-icon-primary">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <h3 class="ticket-title">Refund Aanvragen</h3>
+                            <p class="ticket-description">Aanvragen voor terugbetaling van verloren items</p>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Controleer logs en verwerk refund</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-file"></i>
+                                    <span>Bewijs verplicht</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-card glass-card">
+                            <div class="ticket-icon ticket-icon-secondary">
+                                <i class="fas fa-mask"></i>
+                            </div>
+                            <h3 class="ticket-title">Onderwereld Vragen</h3>
+                            <p class="ticket-description">Vragen over illegale activiteiten en gangs</p>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Help met onderwereld regels en systemen</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-file"></i>
+                                    <span>Bewijs optioneel</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-card glass-card">
+                            <div class="ticket-icon ticket-icon-accent">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <h3 class="ticket-title">Staff Sollicitaties</h3>
+                            <p class="ticket-description">Sollicitaties voor het staff team</p>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Beoordeel sollicitatie en plan interview</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-file"></i>
+                                    <span>Formulier verplicht</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-card glass-card">
+                            <div class="ticket-icon ticket-icon-dev">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <h3 class="ticket-title">Development Vragen</h3>
+                            <p class="ticket-description">Vragen over bugs, features en development</p>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Documenteer bug en forward naar dev team</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-file"></i>
+                                    <span>Bewijs verplicht</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-card glass-card">
+                            <div class="ticket-icon ticket-icon-donation">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h3 class="ticket-title">Donatie Vragen</h3>
+                                    <p class="ticket-description">Vragen over donaties en perks</p>
+                            <div class="ticket-details">
+                                <div class="ticket-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Help met donatie verwerking en perks</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <i class="fas fa-file"></i>
+                                    <span>Bewijs optioneel</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sollicitaties Page -->
+                <div class="page" id="page-sollicitaties">
+                    <div class="page-header">
+                        <h1 class="page-title">Sollicitaties</h1>
+                        <p class="page-subtitle">Informatie over staff sollicitaties</p>
+                    </div>
+
+                    <div class="applications-content glass-card">
+                        <h2>Staff Sollicitatie Proces</h2>
+                        <div class="process-steps">
+                            <div class="process-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h3>Sollicitatie Indienen</h3>
+                                    <p>Vul het sollicitatieformulier in op Discord. Zorg dat je alle vragen volledig en eerlijk beantwoordt.</p>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h3>Screening</h3>
+                                    <p>Je sollicitatie wordt beoordeeld door het recruitment team. Dit duurt meestal 3-7 dagen.</p>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h3>Interview</h3>
+                                    <p>Als je door de screening komt, word je uitgenodigd voor een interview op Discord.</p>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h3>Training</h3>
+                                    <p>Na goedkeuring volg je een trainingperiode van 2 weken als Junior Staff.</p>
+                                </div>
+                            </div>
+                            <div class="process-step">
+                                <div class="step-number">5</div>
+                                <div class="step-content">
+                                    <h3>Evaluatie</h3>
+                                    <p>Na de training wordt je geëvalueerd. Bij goedkeuring word je full Stafflid.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="requirements-section">
+                            <h3>Vereisten</h3>
+                            <ul>
+                                <li>Minimaal 16 jaar oud</li>
+                                <li>Minimaal 3 maanden actief op de server</li>
+                                <li>Schoon strafblad (geen bans in laatste maand)</li>
+                                <li>Minimaal 50 uur speeltijd</li>
+                                <li>Actief op Discord</li>
+                                <li>Goede beheersing van de Nederlandse taal</li>
+                                <li>Beschikbaarheid van minimaal 10 uur per week</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
