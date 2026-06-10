@@ -1034,6 +1034,7 @@ option {
 .quick-action span {
     font-weight: 500;
     font-size: 14px;
+    color: var(--text-primary);
 }
 
 /* Notifications List */
